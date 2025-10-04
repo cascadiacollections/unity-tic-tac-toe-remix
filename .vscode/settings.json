@@ -1,0 +1,15 @@
+{
+    // Hide Unity's generated folders and build artifacts from the editor explorer
+    "files.exclude": {
+        "**/[Ll]ibrary/": true,
+        "**/[Tt]emp/": true,
+        "**/[Bb]uild/": true,
+        "**/[Oo]bj/": true
+    },
+    // Enable C# formatting when saving files
+    "csharp.format.enable": true,
+    // Force OmniSharp to use the globally installed .NET SDK rather than bundling its own
+    "omnisharp.useGlobalMono": "always",
+    // Ensure OmniSharp picks up the SDK installed in the dev container
+    "omnisharp.sdkPath": "/usr/share/dotnet/sdk"
+}
