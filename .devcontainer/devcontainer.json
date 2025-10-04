@@ -1,0 +1,51 @@
+{
+  // Name of the dev container displayed in VS Code
+  "name": "Unity6 Dev Container",
+
+  // Use the universal base image provided by the devcontainers project
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+
+  // Build using a custom Dockerfile to install additional dependencies
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Automatically install common tools via Dev Container features
+  "features": {
+    // Install the .NET SDK (required for OmniSharp and C# IntelliSense)
+    "ghcr.io/devcontainers/features/dotnet:1": {
+      "version": "6.0"
+    }
+  },
+
+  // Customize VS Code with useful extensions and settings
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // C# language support
+        "ms-dotnettools.csharp",
+        // Unity debugging support
+        "Unity.unity-debug"
+      ],
+      "settings": {
+        // Use modern .NET for OmniSharp to avoid legacy Mono warnings
+        "omnisharp.useModernNet": true,
+        // Point OmniSharp at the SDK installed by the dotnet feature
+        "omnisharp.sdkPath": "/usr/share/dotnet/sdk",
+        // Hide generated Unity folders in the explorer
+        "files.exclude": {
+          "**/[Ll]ibrary/": true,
+          "**/[Tt]emp/": true,
+          "**/obj/": true,
+          "**/[Bb]uild/": true
+        }
+      }
+    }
+  },
+
+  // After the container is created, install Mono for legacy .NET compatibility
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y mono-complete",
+
+  // Use the vscode user (pre-created in the base image) instead of root
+  "remoteUser": "vscode"
+}
