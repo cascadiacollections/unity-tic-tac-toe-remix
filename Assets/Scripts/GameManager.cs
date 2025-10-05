@@ -30,13 +30,13 @@ namespace TicTacToe
         public Button restartButton;
 
         // Internal state
-        private Player currentPlayer = Player.X;
-        private Player[] boardState = new Player[9];
-        private bool gameOver = false;
+        private Player _currentPlayer = Player.X;
+        private Player[] _boardState = new Player[9];
+        private bool _gameOver = false;
 
         // Bitmask state: each bit represents a cell (0-8)
-        private int xBoardMask = 0;
-        private int oBoardMask = 0;
+        private int _xBoardMask = 0;
+        private int _oBoardMask = 0;
 
         // Winning patterns as bitmasks
         private static readonly int[] winningMasks = new int[]
@@ -84,9 +84,9 @@ namespace TicTacToe
         /// </summary>
         private void StartNewGame()
         {
-            for (int i = 0; i < boardState.Length; i++)
+            for (int i = 0; i < _boardState.Length; i++)
             {
-                boardState[i] = Player.None;
+                _boardState[i] = Player.None;
                 // Clear any previous mark on the button
                 var image = cellButtons[i].GetComponent<Image>();
                 image.sprite = null;
@@ -94,10 +94,10 @@ namespace TicTacToe
                 cellButtons[i].interactable = true;
             }
 
-            currentPlayer = Player.X;
-            gameOver = false;
-            xBoardMask = 0;
-            oBoardMask = 0;
+            _currentPlayer = Player.X;
+            _gameOver = false;
+            _xBoardMask = 0;
+            _oBoardMask = 0;
             UpdateStatusMessage();
             if (restartButton != null)
             {
@@ -111,47 +111,47 @@ namespace TicTacToe
         /// <param name="index">Index of the clicked button in the board array.</param>
         private void OnCellClicked(int index)
         {
-            if (gameOver) return;
-            if (boardState[index] != Player.None) return;
+            if (_gameOver) return;
+            if (_boardState[index] != Player.None) return;
 
             // Update internal board state
-            boardState[index] = currentPlayer;
+            _boardState[index] = _currentPlayer;
             
             // Update bitmask state
             int bitMask = 1 << index;
-            if (currentPlayer == Player.X)
+            if (_currentPlayer == Player.X)
             {
-                xBoardMask |= bitMask;
+                _xBoardMask |= bitMask;
             }
             else
             {
-                oBoardMask |= bitMask;
+                _oBoardMask |= bitMask;
             }
             
             // Update UI
             var image = cellButtons[index].GetComponent<Image>();
-            image.sprite = currentPlayer == Player.X ? xSprite : oSprite;
+            image.sprite = _currentPlayer == Player.X ? xSprite : oSprite;
             image.color = Color.white;
             cellButtons[index].interactable = false;
 
             // Check game outcome
             if (CheckForWinner())
             {
-                gameOver = true;
-                statusText.text = $"Player {currentPlayer} wins!";
+                _gameOver = true;
+                statusText.text = $"Player {_currentPlayer} wins!";
                 ShowRestartButton();
                 return;
             }
             if (IsBoardFull())
             {
-                gameOver = true;
+                _gameOver = true;
                 statusText.text = "It's a draw.";
                 ShowRestartButton();
                 return;
             }
 
             // Switch player
-            currentPlayer = currentPlayer == Player.X ? Player.O : Player.X;
+            _currentPlayer = _currentPlayer == Player.X ? Player.O : Player.X;
             UpdateStatusMessage();
         }
 
@@ -162,7 +162,7 @@ namespace TicTacToe
         {
             if (statusText != null)
             {
-                statusText.text = $"Player {currentPlayer}'s turn";
+                statusText.text = $"Player {_currentPlayer}'s turn";
             }
         }
 
@@ -192,7 +192,7 @@ namespace TicTacToe
         private bool CheckForWinner()
         {
             // Get the current player's bitmask
-            int playerMask = currentPlayer == Player.X ? xBoardMask : oBoardMask;
+            int playerMask = _currentPlayer == Player.X ? _xBoardMask : _oBoardMask;
             
             // Check if any winning pattern is satisfied
             foreach (int winMask in winningMasks)
@@ -214,7 +214,7 @@ namespace TicTacToe
         {
             // All 9 cells are filled when the combined mask has all 9 bits set
             // 0b111111111 = 0x1FF = 511
-            int combinedMask = xBoardMask | oBoardMask;
+            int combinedMask = _xBoardMask | _oBoardMask;
             return combinedMask == 0b111111111;
         }
     }

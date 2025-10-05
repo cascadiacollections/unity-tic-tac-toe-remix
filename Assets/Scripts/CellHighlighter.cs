@@ -14,26 +14,26 @@ namespace TicTacToe
         [Tooltip("How much to scale the cell when hovered (e.g. 1.1 = 10% larger).")]
         public float hoverScale = 1.1f;
 
-        private Vector3 originalScale;
-        private bool isInitialized;
+        private Vector3 _originalScale;
+        private bool _isInitialized;
 
         private void Awake()
         {
             // Cache the starting scale
-            originalScale = transform.localScale;
-            isInitialized = true;
+            _originalScale = transform.localScale;
+            _isInitialized = true;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (!isInitialized) return;
-            transform.localScale = originalScale * hoverScale;
+            if (!_isInitialized) return;
+            transform.localScale = _originalScale * hoverScale;
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (!isInitialized) return;
-            transform.localScale = originalScale;
+            if (!_isInitialized) return;
+            transform.localScale = _originalScale;
         }
     }
 }
