@@ -199,6 +199,21 @@ namespace TicTacToe
             {
                 // If all bits in the winning pattern are set in the player's mask
                 if ((playerMask & winMask) == winMask)
+                new [] {0, 1, 2}, // Row 0
+                new [] {3, 4, 5}, // Row 1
+                new [] {6, 7, 8}, // Row 2
+                new [] {0, 3, 6}, // Column 0
+                new [] {1, 4, 7}, // Column 1
+                new [] {2, 5, 8}, // Column 2
+                new [] {0, 4, 8}, // Diagonal
+                new [] {2, 4, 6}, // Diagonal
+            };
+
+            foreach (var line in winningLines)
+            {
+                if (_boardState[line[0]] == _currentPlayer &&
+                    _boardState[line[1]] == _currentPlayer &&
+                    _boardState[line[2]] == _currentPlayer)
                 {
                     return true;
                 }
@@ -216,6 +231,11 @@ namespace TicTacToe
             // 0b111111111 = 0x1FF = 511
             int combinedMask = _xBoardMask | _oBoardMask;
             return combinedMask == 0b111111111;
+            foreach (var cell in _boardState)
+            {
+                if (cell == Player.None) return false;
+            }
+            return true;
         }
     }
 }
