@@ -195,10 +195,10 @@ namespace TicTacToe
             int playerMask = _currentPlayer == Player.X ? _xBoardMask : _oBoardMask;
             
             // Check if any winning pattern is satisfied
-            foreach (int winMask in winningMasks)
+            for (int i = 0; i < winningMasks.Length; i++)
             {
                 // If all bits in the winning pattern are set in the player's mask
-                if ((playerMask & winMask) == winMask)
+                if ((playerMask & winningMasks[i]) == winningMasks[i])
                 {
                     return true;
                 }
