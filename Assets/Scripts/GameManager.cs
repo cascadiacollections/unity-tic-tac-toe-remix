@@ -34,6 +34,23 @@ namespace TicTacToe
         private Player[] _boardState = new Player[9];
         private bool _gameOver = false;
 
+        // Bitmask state: each bit represents a cell (0-8)
+        private int _xBoardMask = 0;
+        private int _oBoardMask = 0;
+
+        // Winning patterns as bitmasks
+        private static readonly int[] winningMasks = new int[]
+        {
+            0b000000111, // Row 0: cells 0,1,2
+            0b000111000, // Row 1: cells 3,4,5
+            0b111000000, // Row 2: cells 6,7,8
+            0b001001001, // Column 0: cells 0,3,6
+            0b010010010, // Column 1: cells 1,4,7
+            0b100100100, // Column 2: cells 2,5,8
+            0b100010001, // Diagonal: cells 0,4,8
+            0b001010100, // Diagonal: cells 2,4,6
+        };
+
         private void Awake()
         {
             // Sanity check: ensure we have exactly nine buttons hooked up.
@@ -79,6 +96,8 @@ namespace TicTacToe
 
             _currentPlayer = Player.X;
             _gameOver = false;
+            _xBoardMask = 0;
+            _oBoardMask = 0;
             UpdateStatusMessage();
             if (restartButton != null)
             {
@@ -97,6 +116,18 @@ namespace TicTacToe
 
             // Update internal board state
             _boardState[index] = _currentPlayer;
+            
+            // Update bitmask state
+            int bitMask = 1 << index;
+            if (_currentPlayer == Player.X)
+            {
+                _xBoardMask |= bitMask;
+            }
+            else
+            {
+                _oBoardMask |= bitMask;
+            }
+            
             // Update UI
             var image = cellButtons[index].GetComponent<Image>();
             image.sprite = _currentPlayer == Player.X ? xSprite : oSprite;
@@ -160,23 +191,14 @@ namespace TicTacToe
         /// <returns>True if the current player has three in a row; otherwise false.</returns>
         private bool CheckForWinner()
         {
-            int[][] winningLines = new int[][]
+            // Get the current player's bitmask
+            int playerMask = _currentPlayer == Player.X ? _xBoardMask : _oBoardMask;
+            
+            // Check if any winning pattern is satisfied
+            foreach (int winMask in winningMasks)
             {
-                new [] {0, 1, 2}, // Row 0
-                new [] {3, 4, 5}, // Row 1
-                new [] {6, 7, 8}, // Row 2
-                new [] {0, 3, 6}, // Column 0
-                new [] {1, 4, 7}, // Column 1
-                new [] {2, 5, 8}, // Column 2
-                new [] {0, 4, 8}, // Diagonal
-                new [] {2, 4, 6}, // Diagonal
-            };
-
-            foreach (var line in winningLines)
-            {
-                if (_boardState[line[0]] == _currentPlayer &&
-                    _boardState[line[1]] == _currentPlayer &&
-                    _boardState[line[2]] == _currentPlayer)
+                // If all bits in the winning pattern are set in the player's mask
+                if ((playerMask & winMask) == winMask)
                 {
                     return true;
                 }
@@ -190,11 +212,10 @@ namespace TicTacToe
         /// <returns>True if no empty cells remain; otherwise false.</returns>
         private bool IsBoardFull()
         {
-            foreach (var cell in _boardState)
-            {
-                if (cell == Player.None) return false;
-            }
-            return true;
+            // All 9 cells are filled when the combined mask has all 9 bits set
+            // 0b111111111 = 0x1FF = 511
+            int combinedMask = _xBoardMask | _oBoardMask;
+            return combinedMask == 0b111111111;
         }
     }
 }
