@@ -51,6 +51,9 @@ namespace TicTacToe
             0b001010100, // Diagonal: cells 2,4,6
         };
 
+        // Full board mask (all 9 bits set)
+        private const int FULL_BOARD_MASK = 0b111111111;
+
         private void Awake()
         {
             // Sanity check: ensure we have exactly nine buttons hooked up.
@@ -213,9 +216,8 @@ namespace TicTacToe
         private bool IsBoardFull()
         {
             // All 9 cells are filled when the combined mask has all 9 bits set
-            // 0b111111111 = 0x1FF = 511
             int combinedMask = _xBoardMask | _oBoardMask;
-            return combinedMask == 0b111111111;
+            return combinedMask == FULL_BOARD_MASK;
         }
     }
 }
